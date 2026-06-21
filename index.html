@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco-Companion | Personal Carbon Footprint Tracker</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons for premium visual feel -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow effects -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="bg-glow glow-3"></div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i data-lucide="leaf"></i>
+        </div>
+        <span class="brand-name">Eco-Companion</span>
+      </div>
+      
+      <nav class="nav-menu" role="tablist" aria-label="Primary Navigation">
+        <a href="#dashboard" class="nav-item active" data-tab="dashboard" role="tab" aria-selected="true" aria-controls="dashboard" tabindex="0">
+          <i data-lucide="layout-dashboard" aria-hidden="true"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#geofence" class="nav-item" data-tab="geofence" role="tab" aria-selected="false" aria-controls="geofence" tabindex="0">
+          <i data-lucide="map-pin" aria-hidden="true"></i>
+          <span>Transit Geofence</span>
+        </a>
+        <a href="#transactions" class="nav-item" data-tab="transactions" role="tab" aria-selected="false" aria-controls="transactions" tabindex="0">
+          <i data-lucide="wallet" aria-hidden="true"></i>
+          <span>Transactions</span>
+        </a>
+        <a href="#receipts" class="nav-item" data-tab="receipts" role="tab" aria-selected="false" aria-controls="receipts" tabindex="0">
+          <i data-lucide="camera" aria-hidden="true"></i>
+          <span>Receipt AI & Voice</span>
+        </a>
+        <a href="#challenges" class="nav-item" data-tab="challenges" role="tab" aria-selected="false" aria-controls="challenges" tabindex="0">
+          <i data-lucide="users" aria-hidden="true"></i>
+          <span>Challenges</span>
+        </a>
+        <a href="#ai-insights" class="nav-item" data-tab="ai-insights" role="tab" aria-selected="false" aria-controls="ai-insights" tabindex="0">
+          <i data-lucide="brain" aria-hidden="true"></i>
+          <span>AI & Forecasts</span>
+        </a>
+        <a href="#ar-visualizer" class="nav-item" data-tab="ar-visualizer" role="tab" aria-selected="false" aria-controls="ar-visualizer" tabindex="0">
+          <i data-lucide="wind" aria-hidden="true"></i>
+          <span>AR Smoke Viewer</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="avatar">R</div>
+          <div class="user-info">
+            <span class="user-name">Roma Green</span>
+            <span class="user-role">Eco-Explorer</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top header bar -->
+      <header class="top-bar">
+        <div class="search-bar">
+          <i data-lucide="search"></i>
+          <input type="text" placeholder="Search insights, swaps, carbon databases...">
+        </div>
+        <div class="actions" style="position: relative;">
+          <button class="btn btn-success btn-sm tooltip" data-tooltip="Quick Hackathon Demo" id="launch-demo-btn" style="border: 2px solid var(--accent); box-shadow: 0 0 15px var(--accent-glow);">
+            <i data-lucide="play-circle"></i>
+            <span>Demo Mode</span>
+          </button>
+          <button class="icon-btn tooltip" data-tooltip="Quick Speech Log" id="header-mic-btn">
+            <i data-lucide="mic"></i>
+          </button>
+          <button class="icon-btn tooltip" data-tooltip="Notifications" id="notifications-bell-btn">
+            <span class="badge">3</span>
+            <i data-lucide="bell"></i>
+          </button>
+          
+          <!-- Notifications Dropdown Overlay -->
+          <div class="notifications-dropdown" id="notifications-dropdown">
+            <div class="dropdown-header">
+              <h3>Notifications</h3>
+              <button class="clear-all-btn" id="clear-notifications-btn">Mark read</button>
+            </div>
+            <div class="dropdown-body">
+              <div class="notification-card-item unread">
+                <div class="card-icon"><i data-lucide="navigation"></i></div>
+                <div class="card-text">
+                  <p>Geofence detected a new walk trip! You saved <strong>0.5kg CO₂</strong>.</p>
+                  <span class="time">10m ago</span>
+                </div>
+              </div>
+              <div class="notification-card-item unread">
+                <div class="card-icon"><i data-lucide="zap"></i></div>
+                <div class="card-text">
+                  <p>Smart utility grid is running on 90% wind/solar clean energy right now.</p>
+                  <span class="time">1h ago</span>
+                </div>
+              </div>
+              <div class="notification-card-item unread">
+                <div class="card-icon"><i data-lucide="users"></i></div>
+                <div class="card-text">
+                  <p>Marcus Miller just logged a bike commute and passed you on the leaderboard!</p>
+                  <span class="time">2h ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Viewports -->
+      <!-- TAB 1: DASHBOARD -->
+      <section id="dashboard" class="view-section active">
+        <div class="welcome-banner">
+          <h1>Welcome back, Roma!</h1>
+          <p>You saved <strong>14.2 kg CO₂</strong> this week. You are only 5.8 kg away from your goal!</p>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card primary">
+            <div class="card-header">
+              <span>Weekly Savings</span>
+              <i data-lucide="zap"></i>
+            </div>
+            <div class="metric-value">14.2 <span class="unit">kg CO₂</span></div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" style="width: 71%;"></div>
+            </div>
+            <div class="card-footer">
+              <span class="percent positive">+12%</span> vs last week
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="card-header">
+              <span>Tree Equivalents</span>
+              <i data-lucide="trees"></i>
+            </div>
+            <div class="metric-value">0.7 <span class="unit">trees planted</span></div>
+            <div class="card-description">Based on carbon absorbed in 1 month by a mature tree.</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="card-header">
+              <span>Active Geofence status</span>
+              <i data-lucide="navigation"></i>
+            </div>
+            <div class="metric-value" id="dash-geofence-status">Active</div>
+            <div class="card-description" id="dash-geofence-desc">Monitoring movements background.</div>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <!-- Footprint breakdown chart container -->
+          <div class="card chart-card">
+            <div class="card-title-bar">
+              <h2>Carbon Distribution</h2>
+              <i data-lucide="pie-chart"></i>
+            </div>
+            <div class="chart-container">
+              <div class="circular-chart-box">
+                <svg viewBox="0 0 36 36" class="circular-chart">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle stroke-transit" stroke-dasharray="45, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" />
+                  <path class="circle stroke-utilities" stroke-dasharray="30, 100" stroke-dashoffset="-45" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" />
+                  <path class="circle stroke-food" stroke-dasharray="25, 100" stroke-dashoffset="-75" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" />
+                </svg>
+                <div class="chart-center-text">
+                  <span class="big-num">38.5</span>
+                  <span class="sub-label">kg CO₂ Total</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item"><span class="legend-dot transit"></span> Transit (45%)</div>
+                <div class="legend-item"><span class="legend-dot utilities"></span> Utilities (30%)</div>
+                <div class="legend-item"><span class="legend-dot food"></span> Food & Grocery (25%)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Swaps list -->
+          <div class="card swaps-card">
+            <div class="card-title-bar">
+              <h2>Top Carbon Swap Opportunities</h2>
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div class="swaps-list">
+              <div class="swap-item">
+                <div class="swap-icon red"><i data-lucide="beef"></i></div>
+                <div class="swap-details">
+                  <h4>Beef Burger &rarr; Beyond Meat</h4>
+                  <p>Save 3.4kg CO₂ • Local Kroger Aisle 7</p>
+                </div>
+                <button class="btn btn-sm btn-outline swap-action-btn" data-swap-id="1">Swap</button>
+              </div>
+              <div class="swap-item">
+                <div class="swap-icon orange"><i data-lucide="car"></i></div>
+                <div class="swap-details">
+                  <h4>Drive to Work &rarr; Subway Train</h4>
+                  <p>Save 2.8kg CO₂ • Commute Geofence</p>
+                </div>
+                <button class="btn btn-sm btn-outline swap-action-btn" data-swap-id="2">Swap</button>
+              </div>
+              <div class="swap-item">
+                <div class="swap-icon green"><i data-lucide="lightbulb"></i></div>
+                <div class="swap-details">
+                  <h4>Incandescent &rarr; LED bulbs</h4>
+                  <p>Save 1.2kg CO₂ • Home Utilities</p>
+                </div>
+                <button class="btn btn-sm btn-outline swap-action-btn" data-swap-id="3">Swap</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: GEOFENCE TRANSIT -->
+      <section id="geofence" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1>Autonomous Transit Geofence</h1>
+            <p>Automatically records commute footprint when movement speed exceeds 5 km/h.</p>
+          </div>
+          <div class="switch-container">
+            <span class="label">Background Tracking</span>
+            <label class="switch">
+              <input type="checkbox" id="geofence-toggle" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <!-- Active tracking simulation panel -->
+          <div class="card map-simulation">
+            <div class="simulator-header">
+              <span class="status-indicator active" id="simulator-status-dot"></span>
+              <span class="status-text" id="simulator-status-text">Simulating Background Stay</span>
+            </div>
+            
+            <!-- Custom dynamic canvas-like visual simulator for transit mapping -->
+            <div class="sim-map-area">
+              <div class="glow-point" id="map-glow-point"></div>
+              <svg class="map-path" viewBox="0 0 400 200">
+                <path d="M 50 150 Q 150 50 250 150 T 350 50" fill="transparent" stroke="rgba(255,255,255,0.15)" stroke-width="4" stroke-dasharray="5 5"></path>
+                <path id="map-active-path" d="M 50 150 Q 150 50 250 150 T 350 50" fill="transparent" stroke="var(--accent)" stroke-width="4" stroke-dasharray="400" stroke-dashoffset="400"></path>
+              </svg>
+              <div class="map-marker start">Home</div>
+              <div class="map-marker end">Office</div>
+              <div class="live-pointer" id="live-pointer">
+                <i data-lucide="navigation"></i>
+              </div>
+            </div>
+
+            <div class="simulator-controls">
+              <div class="control-row">
+                <span class="label">Speed Control</span>
+                <span class="value" id="current-speed-val">0 km/h</span>
+              </div>
+              <input type="range" id="speed-slider" min="0" max="60" value="0" class="slider-range">
+              
+              <div class="stats-row mt-4">
+                <div class="stat-box">
+                  <span class="label">Distance</span>
+                  <span class="value" id="sim-distance">0.0 km</span>
+                </div>
+                <div class="stat-box">
+                  <span class="label">Transit Mode</span>
+                  <span class="value" id="sim-mode">Stationary</span>
+                </div>
+                <div class="stat-box">
+                  <span class="label">Footprint</span>
+                  <span class="value" id="sim-footprint">0.0 kg CO₂</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trip History log list -->
+          <div class="card history-card">
+            <div class="card-title-bar">
+              <h2>Transit Trip Logs</h2>
+              <button class="btn btn-sm btn-clear text-accent" id="clear-trips-btn">Clear Logs</button>
+            </div>
+            <div class="trips-log" id="trips-log-container">
+              <!-- Logs dynamic generation -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: TRANSACTIONS -->
+      <section id="transactions" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1>Plaid Transaction Connector</h1>
+            <p>Monitors utilities, energy, and transportation cards to auto-estimate footprint.</p>
+          </div>
+          <button class="btn btn-primary btn-icon" id="plaid-link-btn">
+            <i data-lucide="link-2"></i>
+            <span id="plaid-btn-text">Link Sandbox Bank</span>
+          </button>
+        </div>
+
+        <div class="plaid-connection-status unconnected" id="plaid-status-banner">
+          <i data-lucide="alert-circle"></i>
+          <span>Sandbox Bank Account unconnected. Carbon estimation of purchase transactions is currently disabled.</span>
+        </div>
+
+        <div class="dashboard-split mt-4">
+          <!-- Carbon purchase analysis feed -->
+          <div class="card flex-grow-2">
+            <div class="card-title-bar">
+              <h2>Carbon Ingested Ledger</h2>
+              <i data-lucide="receipt"></i>
+            </div>
+            <div class="table-responsive">
+              <table class="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Merchant / Provider</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Est. Carbon Footprint</th>
+                  </tr>
+                </thead>
+                <tbody id="transactions-body">
+                  <!-- Dynamic transactions rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Credit Card preview -->
+          <div class="card credit-card-panel">
+            <div class="carbon-card">
+              <div class="card-chip"></div>
+              <div class="card-number">•••• •••• •••• 9012</div>
+              <div class="card-holder-row">
+                <div>
+                  <span class="label">CARDHOLDER</span>
+                  <span class="val">Roma Green</span>
+                </div>
+                <div>
+                  <span class="label">ECO SCORE</span>
+                  <span class="val accent-text">A+</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-insights mt-4">
+              <h3>Spend Insights</h3>
+              <div class="insight-item">
+                <i data-lucide="flame" class="text-orange"></i>
+                <div class="text">
+                  <p>Your gas station visits emit <strong>45% more</strong> than the average user in your zip code.</p>
+                </div>
+              </div>
+              <div class="insight-item">
+                <i data-lucide="zap" class="text-accent"></i>
+                <div class="text">
+                  <p>Duke Energy integration detected 100% nuclear/wind power source grid hours. Points added!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: RECEIPT AI & VOICE -->
+      <section id="receipts" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1>AI Receipt Swapper & Voice Logger</h1>
+            <p>Snap a photo of grocery receipts or simply state your items aloud to calculate emissions.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <!-- Upload and voice input inputs -->
+          <div class="card input-methods-card">
+            <h2>Ingestion Hub</h2>
+            <p class="description">Select a demo recipe or use voice logging to simulate immediate OCR analysis.</p>
+            
+            <div class="tabs-sub">
+              <button class="tab-sub-btn active" id="tab-sub-upload">Receipt OCR Upload</button>
+              <button class="tab-sub-btn" id="tab-sub-voice">AI Voice Logger</button>
+            </div>
+
+            <!-- Upload Subtab Content -->
+            <div class="sub-tab-content active" id="sub-upload-content">
+              <div class="dropzone" id="ocr-dropzone">
+                <i data-lucide="upload-cloud"></i>
+                <h3>Drag & Drop Grocery Receipt</h3>
+                <p>or click to choose image file</p>
+                <input type="file" id="receipt-file-input" style="display:none;" accept="image/*">
+              </div>
+              <div class="demo-receipts-row mt-4">
+                <span class="label">Demo Presets:</span>
+                <button class="btn btn-sm btn-outline preset-btn" data-preset="burger">Steak & Burger Receipt</button>
+                <button class="btn btn-sm btn-outline preset-btn" data-preset="salad">Salad & Dairy Receipt</button>
+              </div>
+            </div>
+
+            <!-- Voice Subtab Content -->
+            <div class="sub-tab-content" id="sub-voice-content">
+              <div class="voice-logger-box">
+                <div class="voice-visualizer">
+                  <div class="visualizer-bar bar-1"></div>
+                  <div class="visualizer-bar bar-2"></div>
+                  <div class="visualizer-bar bar-3"></div>
+                  <div class="visualizer-bar bar-4"></div>
+                  <div class="visualizer-bar bar-5"></div>
+                </div>
+                <button class="mic-button" id="voice-record-btn">
+                  <i data-lucide="mic"></i>
+                </button>
+                <h4 id="voice-status">Tap microphone to start speaking...</h4>
+                <p class="voice-instruction">Example: "I bought three packs of beef mince, organic apples, dairy milk, and a head of lettuce."</p>
+              </div>
+              <div class="demo-voice-row mt-4">
+                <span class="label">Speak Presets:</span>
+                <button class="btn btn-sm btn-outline voice-preset" data-text="I bought organic local apples, a head of fresh lettuce, and standard cow milk">Healthy Salad</button>
+                <button class="btn btn-sm btn-outline voice-preset" data-text="I bought two pounds of steak beef ribeye, cheese slices, and paper plates">BBQ Groceries</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Parsed Scan Results details -->
+          <div class="card scan-results-card">
+            <div class="card-title-bar">
+              <h2>AI Swapper Analysis</h2>
+              <div class="scan-state-badge" id="scan-state-badge">Waiting</div>
+            </div>
+            
+            <div class="scan-empty-state" id="scan-empty-view">
+              <i data-lucide="brain-circuit"></i>
+              <p>Upload a receipt or speak to trigger AI item parsing and shelf swaps.</p>
+            </div>
+
+            <div class="scan-loading-state" id="scan-loading-view" style="display: none;">
+              <div class="spinner"></div>
+              <h3>Analyzing grocery ingredients...</h3>
+              <p>Cross-referencing item lifecycle footprint values...</p>
+            </div>
+
+            <div class="scan-completed-state" id="scan-completed-view" style="display: none;">
+              <div class="summary-banner">
+                <div class="footprint-num">
+                  <span class="val" id="scan-total-carbon">18.5</span>
+                  <span class="lbl">kg CO₂ Footprint</span>
+                </div>
+                <button class="btn btn-primary btn-sm" id="apply-all-swaps-btn">Swap All Alternatives</button>
+              </div>
+
+              <div class="items-to-swap-list" id="scan-items-container">
+                <!-- Dynamically populated list of items and swaps -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: CHALLENGES -->
+      <section id="challenges" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1>Private Friends Challenge</h1>
+            <p>Rally your friends or coworkers to see who can save the most carbon this week.</p>
+          </div>
+          <button class="btn btn-outline btn-icon" id="generate-invite-btn">
+            <i data-lucide="share-2"></i>
+            <span>Generate Invite Link</span>
+          </button>
+        </div>
+
+        <div class="dashboard-split">
+          <!-- Active Challenges & invite panel -->
+          <div class="card flex-grow-2">
+            <div class="card-title-bar">
+              <h2>Weekly Leaderboard: "Commute Green Challenge"</h2>
+              <span class="days-left-badge"><i data-lucide="clock"></i> 3 days left</span>
+            </div>
+            <div class="leaderboard-list" id="leaderboard-container">
+              <!-- Dynamically populated list of ranking users -->
+            </div>
+          </div>
+
+          <!-- Challenge creation/details -->
+          <div class="card challenge-rules-card">
+            <h3>Challenge Scope</h3>
+            <div class="challenge-goal">
+              <div class="goal-circle">
+                <span class="value">50</span>
+                <span class="unit">kg CO₂</span>
+              </div>
+              <div class="goal-desc">Target combined carbon reductions for the league.</div>
+            </div>
+
+            <div class="rules-list mt-4">
+              <h3>How to Win Points:</h3>
+              <ul>
+                <li><i data-lucide="check-circle-2"></i> Complete a commute via bicycle: +50 points</li>
+                <li><i data-lucide="check-circle-2"></i> Swap a red meat grocery item: +35 points</li>
+                <li><i data-lucide="check-circle-2"></i> Link smart power utility grid account: +100 points</li>
+                <li><i data-lucide="check-circle-2"></i> Keep daily carbon emissions under 10kg: +20 points</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5.5: AI & PREDICTIVE INSIGHTS -->
+      <section id="ai-insights" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1>AI & Predictive Insights</h1>
+            <p>Personalized carbon forecasts, sustainability scores, and smart recommendations.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <!-- Sustainability Score & Social Impact Gauge -->
+          <div class="card score-impact-card">
+            <div class="card-title-bar">
+              <h2>Sustainability & Social Score</h2>
+              <i data-lucide="award"></i>
+            </div>
+            
+            <div class="score-display">
+              <div class="score-circle">
+                <span class="score-num">88</span>
+                <span class="score-label">Eco-Score</span>
+              </div>
+              <div class="score-grade">
+                <h3>Level: Eco-Leader</h3>
+                <p>Top 8% in your community</p>
+              </div>
+            </div>
+
+            <div class="impact-metrics-list mt-4">
+              <div class="impact-metric-row">
+                <span class="lbl">Habit Consistency</span>
+                <div class="progress-bar-container mini">
+                  <div class="progress-bar" style="width: 92%; background: var(--accent);"></div>
+                </div>
+                <span class="val">92%</span>
+              </div>
+              <div class="impact-metric-row">
+                <span class="lbl">Social Influence</span>
+                <div class="progress-bar-container mini">
+                  <div class="progress-bar" style="width: 65%; background: var(--primary);"></div>
+                </div>
+                <span class="val">+15%</span>
+              </div>
+              <div class="impact-metric-row">
+                <span class="lbl">Offset Balance</span>
+                <div class="progress-bar-container mini">
+                  <div class="progress-bar" style="width: 80%; background: #D500F9;"></div>
+                </div>
+                <span class="val">80%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Predictive Analytics & Forecast Graph -->
+          <div class="card forecast-card">
+            <div class="card-title-bar">
+              <h2>Footprint Projection (Next Month)</h2>
+              <i data-lucide="trending-up"></i>
+            </div>
+
+            <div class="forecast-bars-container">
+              <div class="forecast-bar-item">
+                <span class="label">Current Trajectory</span>
+                <div class="bar-track">
+                  <div class="bar-fill danger-bar" style="width: 82%;">154 kg</div>
+                </div>
+                <span class="desc">If habits remain unchanged.</span>
+              </div>
+              
+              <div class="forecast-bar-item mt-4">
+                <span class="label">Optimized Path</span>
+                <div class="bar-track">
+                  <div class="bar-fill success-bar" style="width: 48%;">92 kg</div>
+                </div>
+                <span class="desc">If smart AI recommendations are implemented.</span>
+              </div>
+            </div>
+
+            <div class="card-insights mt-4 bg-hologram">
+              <p>🌱 By adopting the active smart recommendations below, you will reduce your footprint by <strong>62 kg CO₂</strong>, saving approximately <strong>$42.00</strong> in household energy costs.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart & Personalized Suggestions Row -->
+        <div class="card mt-4">
+          <div class="card-title-bar">
+            <h2>Personalized Action Recommendations</h2>
+            <i data-lucide="sparkles"></i>
+          </div>
+
+          <div class="smart-suggestions-grid">
+            <div class="suggestion-tile">
+              <div class="tile-icon"><i data-lucide="zap"></i></div>
+              <div class="tile-info">
+                <h4>Grid-Aware Power Offsets</h4>
+                <p>Shift dishwasher and EV charging runs to 2 AM. Duke Energy grid clean power hours detected.</p>
+                <div class="tile-savings">Save 12.4 kg CO₂/mo • Save $18.00</div>
+              </div>
+              <button class="btn btn-sm btn-outline apply-suggestion-btn" data-saving="12.4" data-name="Grid-Aware Power Offsets">Activate</button>
+            </div>
+
+            <div class="suggestion-tile mt-3">
+              <div class="tile-icon"><i data-lucide="train"></i></div>
+              <div class="tile-info">
+                <h4>Target Thursday Commutes</h4>
+                <p>Geofencing detected weekly office drive habits on Thursdays. Swap with public subway transit.</p>
+                <div class="tile-savings">Save 18.0 kg CO₂/mo • Save $12.00</div>
+              </div>
+              <button class="btn btn-sm btn-outline apply-suggestion-btn" data-saving="18.0" data-name="Target Thursday Commutes">Activate</button>
+            </div>
+
+            <div class="suggestion-tile mt-3">
+              <div class="tile-icon"><i data-lucide="beef"></i></div>
+              <div class="tile-info">
+                <h4>Weekly Plant-Based Diet Days</h4>
+                <p>Receipt OCR logs indicate steak purchases. Subbing beef for alternative proteins twice a week.</p>
+                <div class="tile-savings">Save 34.0 kg CO₂/mo • Save $22.00</div>
+              </div>
+              <button class="btn btn-sm btn-outline apply-suggestion-btn" data-saving="34.0" data-name="Weekly Plant-Based Diet Days">Activate</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: AR SMOKE VIEWER -->
+      <section id="ar-visualizer" class="view-section">
+        <div class="view-header">
+          <div>
+            <h1>AR Emission Smoke Visualizer</h1>
+            <p>Volumetric AR visualization showing carbon generated (red smoke) versus carbon saved (green smoke) in your space.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <!-- Live 3D / canvas renderer -->
+          <div class="card ar-rendering-card">
+            <div class="ar-status-bar">
+              <span class="indicator"><i data-lucide="camera-off"></i> AR Simulation Feed</span>
+              <button class="btn btn-sm btn-outline" id="ar-camera-toggle">Switch Camera Feed</button>
+            </div>
+            
+            <div class="ar-viewport-container">
+              <!-- Simulator view canvas overlay -->
+              <canvas id="ar-canvas"></canvas>
+              
+              <!-- AR guidance Overlay UI -->
+              <div class="ar-hud">
+                <div class="hud-stat red">
+                  <span class="label">Active Emissions Volume</span>
+                  <span class="val" id="ar-hud-emissions">45.0 kg</span>
+                </div>
+                <div class="hud-stat green">
+                  <span class="label">Volumetric Reductions</span>
+                  <span class="val" id="ar-hud-reductions">14.2 kg</span>
+                </div>
+              </div>
+
+              <!-- Complete micro-actions to clear smoke -->
+              <div class="ar-overlay-tutorial">
+                <p>Shake your device, or click buttons on the right panel to simulate eco-habits and see the carbon smoke dissipate in real time.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AR Smoke settings/controls -->
+          <div class="card ar-controls-card">
+            <h2>Volumetric Controls</h2>
+            <p class="description">Manually inject emissions or reductions to see how carbon volumes change spatial density in the atmosphere.</p>
+            
+            <div class="form-group mt-4">
+              <button class="btn btn-danger btn-full" id="ar-inject-emission">
+                <i data-lucide="flame"></i> Inject 10kg Emission (Add Smoke)
+              </button>
+              <button class="btn btn-success btn-full mt-2" id="ar-inject-reduction">
+                <i data-lucide="leaf"></i> Perform Eco-Action (Clear Smoke)
+              </button>
+              <button class="btn btn-outline btn-full mt-2" id="ar-reset">
+                <i data-lucide="rotate-ccw"></i> Reset Smoke Density
+              </button>
+            </div>
+
+            <div class="smoke-volume-card mt-4">
+              <h3>Volume Equivalents</h3>
+              <div class="vol-metric">
+                <span class="val" id="ar-vol-eq">1,250 Liters</span>
+                <span class="lbl">of pure CO₂ gas floating around you.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Local Inventory Swapping / Shelf Directory Modal -->
+  <div class="modal" id="shelf-locator-modal">
+    <div class="modal-backdrop" id="shelf-modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-item-title">Shelf Locator Directory</h2>
+        <button class="close-btn" id="shelf-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="locator-insight">
+          <i data-lucide="navigation" class="text-accent animate-bounce"></i>
+          <div>
+            <h4 id="locator-store-name">Whole Foods Market - Aisle 4</h4>
+            <p id="locator-detail-text">This alternative is stocked locally and ready to pick up.</p>
+          </div>
+        </div>
+
+        <!-- Simulated Store Layout Grid -->
+        <div class="store-grid-layout">
+          <div class="store-section aisle-1">Aisle 1: Bakery</div>
+          <div class="store-section aisle-2">Aisle 2: Frozen Foods</div>
+          <div class="store-section aisle-3">Aisle 3: Dairy & Milk</div>
+          <div class="store-section aisle-4 highlighted" id="store-aisle-4">
+            <span class="pulsing-pin"></span>
+            Aisle 4: Plant Alternatives
+          </div>
+          <div class="store-section aisle-5">Aisle 5: Meat & Seafood</div>
+          <div class="store-section checkout">Checkout Terminals</div>
+        </div>
+      </div>
+      <div class="modal-body-sub-info">
+        <div class="inventory-status">
+          <span class="stock-indicator green"></span> In Stock (12 units available)
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="modal-done-btn">Got It, Save Aisle Info</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
