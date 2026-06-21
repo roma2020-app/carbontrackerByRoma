@@ -1,0 +1,11 @@
+{
+  "name": "eco-companion",
+  "version": "1.0.0",
+  "description": "Eco-Companion: Personal Carbon Footprint Tracker MVP",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test.js",
+    "start": "python -m http.server 8080"
+  },
+  "devDependencies": {}
+}

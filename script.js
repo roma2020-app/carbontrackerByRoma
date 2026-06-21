@@ -67,10 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (type === "warning") iconName = "alert-triangle";
     if (type === "danger") iconName = "flame";
 
-    toast.innerHTML = `
-      <i data-lucide="${iconName}"></i>
-      <span>${message}</span>
-    `;
+    toast.textContent = "";
+    const iconNode = document.createElement("i");
+    iconNode.setAttribute("data-lucide", iconName);
+    const spanNode = document.createElement("span");
+    spanNode.textContent = message;
+    toast.appendChild(iconNode);
+    toast.appendChild(spanNode);
     
     toastContainer.appendChild(toast);
     lucide.createIcons();
@@ -116,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function renderTripsLog() {
-    tripsLogContainer.innerHTML = "";
+    tripsLogContainer.textContent = "";
     tripsLog.forEach(trip => {
       const item = document.createElement("div");
       item.className = "trip-log-item";
@@ -131,22 +134,40 @@ document.addEventListener("DOMContentLoaded", () => {
         iconClass = "green";
       }
 
-      item.innerHTML = `
-        <div class="trip-info">
-          <div class="trip-icon ${iconClass}">
-            <i data-lucide="${icon}"></i>
-          </div>
-          <div class="trip-details">
-            <h4>${trip.mode.charAt(0) + trip.mode.slice(1).toLowerCase()} Commute</h4>
-            <p>${trip.distance.toFixed(1)} km • ${trip.date}</p>
-          </div>
-        </div>
-        <div class="trip-carbon">
-          <span class="carbon-val ${trip.isSaving ? 'saving' : 'cost'}">
-            ${trip.isSaving ? '-' : '+'}${trip.carbon.toFixed(1)} kg CO₂
-          </span>
-        </div>
-      `;
+      const infoDiv = document.createElement("div");
+      infoDiv.className = "trip-info";
+      
+      const iconDiv = document.createElement("div");
+      iconDiv.className = `trip-icon ${iconClass}`;
+      const iconNode = document.createElement("i");
+      iconNode.setAttribute("data-lucide", icon);
+      iconDiv.appendChild(iconNode);
+      
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "trip-details";
+      
+      const h4Node = document.createElement("h4");
+      h4Node.textContent = `${trip.mode.charAt(0) + trip.mode.slice(1).toLowerCase()} Commute`;
+      
+      const pNode = document.createElement("p");
+      pNode.textContent = `${trip.distance.toFixed(1)} km • ${trip.date}`;
+      
+      detailsDiv.appendChild(h4Node);
+      detailsDiv.appendChild(pNode);
+      
+      infoDiv.appendChild(iconDiv);
+      infoDiv.appendChild(detailsDiv);
+      
+      const carbonDiv = document.createElement("div");
+      carbonDiv.className = "trip-carbon";
+      
+      const valSpan = document.createElement("span");
+      valSpan.className = `carbon-val ${trip.isSaving ? 'saving' : 'cost'}`;
+      valSpan.textContent = `${trip.isSaving ? '-' : '+'}${trip.carbon.toFixed(1)} kg CO₂`;
+      carbonDiv.appendChild(valSpan);
+      
+      item.appendChild(infoDiv);
+      item.appendChild(carbonDiv);
       tripsLogContainer.appendChild(item);
     });
     lucide.createIcons();
@@ -293,7 +314,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateWeeklySavings(value) {
     currentWeeklySavings += value;
     savingsElements.forEach(el => {
-      el.innerHTML = `${currentWeeklySavings.toFixed(1)} <span class="unit">kg CO₂</span>`;
+      el.textContent = "";
+      const valNode = document.createTextNode(currentWeeklySavings.toFixed(1) + " ");
+      const spanNode = document.createElement("span");
+      spanNode.className = "unit";
+      spanNode.textContent = "kg CO₂";
+      el.appendChild(valNode);
+      el.appendChild(spanNode);
     });
     
     // Update progress bar percentage
@@ -328,13 +355,23 @@ document.addEventListener("DOMContentLoaded", () => {
         plaidLinked = true;
         plaidLinkBtn.disabled = false;
         plaidLinkBtn.className = "btn btn-success btn-icon";
-        plaidLinkBtn.innerHTML = `<i data-lucide="check-circle"></i> Connected`;
+        
+        plaidLinkBtn.textContent = "";
+        const iconNode1 = document.createElement("i");
+        iconNode1.setAttribute("data-lucide", "check-circle");
+        const spanNode1 = document.createElement("span");
+        spanNode1.textContent = " Connected";
+        plaidLinkBtn.appendChild(iconNode1);
+        plaidLinkBtn.appendChild(spanNode1);
         
         plaidStatusBanner.className = "plaid-connection-status connected";
-        plaidStatusBanner.innerHTML = `
-          <i data-lucide="check-circle-2"></i>
-          <span>Plaid Link active. Credit card utility bills are synchronized and analyzed.</span>
-        `;
+        plaidStatusBanner.textContent = "";
+        const iconNode2 = document.createElement("i");
+        iconNode2.setAttribute("data-lucide", "check-circle-2");
+        const spanNode2 = document.createElement("span");
+        spanNode2.textContent = " Plaid Link active. Credit card utility bills are synchronized and analyzed.";
+        plaidStatusBanner.appendChild(iconNode2);
+        plaidStatusBanner.appendChild(spanNode2);
         
         // Render ledger rows
         renderTransactions();
@@ -345,30 +382,57 @@ document.addEventListener("DOMContentLoaded", () => {
       // Unlink account
       plaidLinked = false;
       plaidLinkBtn.className = "btn btn-primary btn-icon";
-      plaidLinkBtn.innerHTML = `<i data-lucide="link-2"></i> <span>Link Sandbox Bank</span>`;
+      
+      plaidLinkBtn.textContent = "";
+      const iconNode3 = document.createElement("i");
+      iconNode3.setAttribute("data-lucide", "link-2");
+      const spanNode3 = document.createElement("span");
+      spanNode3.textContent = " Link Sandbox Bank";
+      plaidLinkBtn.appendChild(iconNode3);
+      plaidLinkBtn.appendChild(spanNode3);
       
       plaidStatusBanner.className = "plaid-connection-status unconnected";
-      plaidStatusBanner.innerHTML = `
-        <i data-lucide="alert-circle"></i>
-        <span>Sandbox Bank Account unconnected. Carbon estimation of purchase transactions is currently disabled.</span>
-      `;
+      plaidStatusBanner.textContent = "";
+      const iconNode4 = document.createElement("i");
+      iconNode4.setAttribute("data-lucide", "alert-circle");
+      const spanNode4 = document.createElement("span");
+      spanNode4.textContent = " Sandbox Bank Account unconnected. Carbon estimation of purchase transactions is currently disabled.";
+      plaidStatusBanner.appendChild(iconNode4);
+      plaidStatusBanner.appendChild(spanNode4);
       
-      transactionsBody.innerHTML = "";
+      transactionsBody.textContent = "";
       showToast("Bank connection removed.", "info");
       lucide.createIcons();
     }
   });
 
   function renderTransactions() {
-    transactionsBody.innerHTML = "";
+    transactionsBody.textContent = "";
     mockTransactions.forEach(tx => {
       const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><strong>${tx.merchant}</strong></td>
-        <td>${tx.category}</td>
-        <td>${tx.amount}</td>
-        <td><span class="carbon-pill ${tx.isRed ? 'red' : 'green'}">${tx.carbon}</span></td>
-      `;
+      
+      const tdMerchant = document.createElement("td");
+      const strongMerchant = document.createElement("strong");
+      strongMerchant.textContent = tx.merchant;
+      tdMerchant.appendChild(strongMerchant);
+      
+      const tdCategory = document.createElement("td");
+      tdCategory.textContent = tx.category;
+      
+      const tdAmount = document.createElement("td");
+      tdAmount.textContent = tx.amount;
+      
+      const tdCarbon = document.createElement("td");
+      const spanCarbon = document.createElement("span");
+      spanCarbon.className = `carbon-pill ${tx.isRed ? 'red' : 'green'}`;
+      spanCarbon.textContent = tx.carbon;
+      tdCarbon.appendChild(spanCarbon);
+      
+      row.appendChild(tdMerchant);
+      row.appendChild(tdCategory);
+      row.appendChild(tdAmount);
+      row.appendChild(tdCarbon);
+      
       transactionsBody.appendChild(row);
     });
   }
@@ -463,28 +527,62 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderScanItems() {
-    scanItemsContainer.innerHTML = "";
+    scanItemsContainer.textContent = "";
     currentlyLoadedItems.forEach(item => {
       const card = document.createElement("div");
       card.className = "parsed-item-card";
       card.id = `card-${item.id}`;
       
-      card.innerHTML = `
-        <div class="parsed-item-row">
-          <span class="name">${item.name}</span>
-          <span class="carbon red">${item.carbon.toFixed(1)} kg CO₂</span>
-        </div>
-        <div class="swap-offer-box" id="swap-box-${item.id}">
-          <div class="details">
-            <h5>Swap: ${item.alternative}</h5>
-            <p>Save ${item.savings.toFixed(1)}kg CO₂ • ${item.alternativeCarbon.toFixed(1)}kg</p>
-          </div>
-          <div>
-            <button class="shelf-locate-link mb-2 mr-2" data-item-id="${item.id}">Locate in Store</button>
-            <button class="btn btn-xs btn-success accept-swap-btn" data-item-id="${item.id}">Accept</button>
-          </div>
-        </div>
-      `;
+      const itemRow = document.createElement("div");
+      itemRow.className = "parsed-item-row";
+      
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "name";
+      nameSpan.textContent = item.name;
+      
+      const carbonSpan = document.createElement("span");
+      carbonSpan.className = "carbon red";
+      carbonSpan.textContent = `${item.carbon.toFixed(1)} kg CO₂`;
+      
+      itemRow.appendChild(nameSpan);
+      itemRow.appendChild(carbonSpan);
+      
+      const swapBox = document.createElement("div");
+      swapBox.className = "swap-offer-box";
+      swapBox.id = `swap-box-${item.id}`;
+      
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "details";
+      
+      const h5 = document.createElement("h5");
+      h5.textContent = `Swap: ${item.alternative}`;
+      
+      const p = document.createElement("p");
+      p.textContent = `Save ${item.savings.toFixed(1)}kg CO₂ • ${item.alternativeCarbon.toFixed(1)}kg`;
+      
+      detailsDiv.appendChild(h5);
+      detailsDiv.appendChild(p);
+      
+      const buttonsDiv = document.createElement("div");
+      
+      const locateBtn = document.createElement("button");
+      locateBtn.className = "shelf-locate-link mb-2 mr-2";
+      locateBtn.setAttribute("data-item-id", item.id);
+      locateBtn.textContent = "Locate in Store";
+      
+      const acceptBtn = document.createElement("button");
+      acceptBtn.className = "btn btn-xs btn-success accept-swap-btn";
+      acceptBtn.setAttribute("data-item-id", item.id);
+      acceptBtn.textContent = "Accept";
+      
+      buttonsDiv.appendChild(locateBtn);
+      buttonsDiv.appendChild(acceptBtn);
+      
+      swapBox.appendChild(detailsDiv);
+      swapBox.appendChild(buttonsDiv);
+      
+      card.appendChild(itemRow);
+      card.appendChild(swapBox);
       scanItemsContainer.appendChild(card);
     });
 
@@ -520,12 +618,21 @@ document.addEventListener("DOMContentLoaded", () => {
     card.style.borderColor = "var(--accent)";
     card.style.background = "rgba(0, 230, 118, 0.03)";
     
-    const swapBox = document.getElementById(`swap-box-${itemId}`);
-    swapBox.innerHTML = `
-      <div style="color: var(--accent); font-weight: 600; display:flex; align-items:center; gap: 6px;">
-        <i data-lucide="check"></i> Swapped successfully!
-      </div>
-    `;
+    swapBox.textContent = "";
+    const successDiv = document.createElement("div");
+    successDiv.style.color = "var(--accent)";
+    successDiv.style.fontWeight = "600";
+    successDiv.style.display = "flex";
+    successDiv.style.alignItems = "center";
+    successDiv.style.gap = "6px";
+    
+    const checkIcon = document.createElement("i");
+    checkIcon.setAttribute("data-lucide", "check");
+    const checkText = document.createTextNode(" Swapped successfully!");
+    
+    successDiv.appendChild(checkIcon);
+    successDiv.appendChild(checkText);
+    swapBox.appendChild(successDiv);
     lucide.createIcons();
 
     // Adjust total carbon metrics on top bar
@@ -547,15 +654,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateWeeklySavings(totalSaved);
     currentlyLoadedItems = [];
-    
     scanTotalCarbon.textContent = "0.0";
-    scanItemsContainer.innerHTML = `
-      <div class="summary-banner" style="border-color: var(--accent); background: rgba(0, 230, 118, 0.05); text-align: center; justify-content: center; width: 100%;">
-        <span style="color: var(--accent); font-weight: 700; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="check-circle-2"></i> All ingredients swapped! Saved ${totalSaved.toFixed(1)}kg CO₂.
-        </span>
-      </div>
-    `;
+    scanItemsContainer.textContent = "";
+    
+    const bannerDiv = document.createElement("div");
+    bannerDiv.className = "summary-banner";
+    bannerDiv.style.borderColor = "var(--accent)";
+    bannerDiv.style.background = "rgba(0, 230, 118, 0.05)";
+    bannerDiv.style.textAlign = "center";
+    bannerDiv.style.justifyContent = "center";
+    bannerDiv.style.width = "100%";
+    
+    const bannerSpan = document.createElement("span");
+    bannerSpan.style.color = "var(--accent)";
+    bannerSpan.style.fontWeight = "700";
+    bannerSpan.style.display = "flex";
+    bannerSpan.style.alignItems = "center";
+    bannerSpan.style.gap = "8px";
+    
+    const checkCircleIcon = document.createElement("i");
+    checkCircleIcon.setAttribute("data-lucide", "check-circle-2");
+    const bannerSpanText = document.createTextNode(` All ingredients swapped! Saved ${totalSaved.toFixed(1)}kg CO₂.`);
+    
+    bannerSpan.appendChild(checkCircleIcon);
+    bannerSpan.appendChild(bannerSpanText);
+    bannerDiv.appendChild(bannerSpan);
+    scanItemsContainer.appendChild(bannerDiv);
     lucide.createIcons();
     showToast(`Successfully swapped all items. Savings: +${totalSaved.toFixed(1)}kg CO₂!`, "success");
   });
@@ -637,8 +761,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".store-section").forEach(sec => sec.classList.remove("highlighted"));
     
     if (storeLocation.includes("Aisle 4")) {
-      document.getElementById("store-aisle-4").classList.add("highlighted");
-      document.getElementById("store-aisle-4").innerHTML = `<span class="pulsing-pin"></span> Aisle 4: Plant Swaps`;
+      const aisle4El = document.getElementById("store-aisle-4");
+      aisle4El.classList.add("highlighted");
+      aisle4El.textContent = "";
+      const pinSpan = document.createElement("span");
+      pinSpan.className = "pulsing-pin";
+      const txtNode = document.createTextNode(" Aisle 4: Plant Swaps");
+      aisle4El.appendChild(pinSpan);
+      aisle4El.appendChild(txtNode);
     } else {
       const randAisle = document.querySelector(`.aisle-${Math.floor(Math.random() * 3) + 1}`);
       if (randAisle) randAisle.classList.add("highlighted");
@@ -669,7 +799,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function renderLeaderboard() {
-    leaderboardContainer.innerHTML = "";
+    leaderboardContainer.textContent = "";
     leaderboardUsers.sort((a,b) => b.score - a.score).forEach((user, index) => {
       user.rank = index + 1;
       const row = document.createElement("div");
@@ -679,14 +809,32 @@ document.addEventListener("DOMContentLoaded", () => {
       if (user.rank === 2) row.classList.add("silver-rank");
       if (user.rank === 3) row.classList.add("bronze-rank");
 
-      row.innerHTML = `
-        <div class="rank-user">
-          <span class="rank-num">#${user.rank}</span>
-          <div class="user-avatar">${user.name.charAt(0)}</div>
-          <span class="user-name">${user.name}</span>
-        </div>
-        <span class="user-score">${user.score.toFixed(1)} kg saved</span>
-      `;
+      const rankUserDiv = document.createElement("div");
+      rankUserDiv.className = "rank-user";
+      
+      const rankSpan = document.createElement("span");
+      rankSpan.className = "rank-num";
+      rankSpan.textContent = `#${user.rank}`;
+      
+      const avatarDiv = document.createElement("div");
+      avatarDiv.className = "user-avatar";
+      avatarDiv.textContent = user.name.charAt(0);
+      
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "user-name";
+      nameSpan.textContent = user.name;
+      
+      rankUserDiv.appendChild(rankSpan);
+      rankUserDiv.appendChild(avatarDiv);
+      rankUserDiv.appendChild(nameSpan);
+      
+      const scoreSpan = document.createElement("span");
+      scoreSpan.className = "user-score";
+      scoreSpan.textContent = `${user.score.toFixed(1)} kg saved`;
+      
+      row.appendChild(rankUserDiv);
+      row.appendChild(scoreSpan);
+      
       leaderboardContainer.appendChild(row);
     });
   }
@@ -953,10 +1101,14 @@ document.addEventListener("DOMContentLoaded", () => {
       let newScore = Math.min(currentScore + 3, 100);
       scoreNumText.textContent = newScore;
 
-      // Update button state
       btn.disabled = true;
       btn.className = "btn btn-sm btn-success";
-      btn.innerHTML = `<i data-lucide="check"></i> Active`;
+      btn.textContent = "";
+      const checkIcon = document.createElement("i");
+      checkIcon.setAttribute("data-lucide", "check");
+      const activeText = document.createTextNode(" Active");
+      btn.appendChild(checkIcon);
+      btn.appendChild(activeText);
       
       showToast(`Activated: ${name}! Carbon footprint reduced.`, "success");
       lucide.createIcons();
@@ -976,7 +1128,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Disable to prevent concurrent runs
     launchDemoBtn.disabled = true;
     launchDemoBtn.className = "btn btn-outline btn-sm";
-    launchDemoBtn.innerHTML = `<i class="spinner" style="width:14px; height:14px; border-width:2px; margin-bottom:0;"></i> <span>Running Demo...</span>`;
+    
+    launchDemoBtn.textContent = "";
+    const spinnerIcon = document.createElement("i");
+    spinnerIcon.className = "spinner";
+    spinnerIcon.style.width = "14px";
+    spinnerIcon.style.height = "14px";
+    spinnerIcon.style.borderWidth = "2px";
+    spinnerIcon.style.marginBottom = "0";
+    const runTextSpan = document.createElement("span");
+    runTextSpan.textContent = " Running Demo...";
+    launchDemoBtn.appendChild(spinnerIcon);
+    launchDemoBtn.appendChild(runTextSpan);
 
     showToast("🚀 Demo Mode initiated! Auto-populating sandbox databases...", "info");
     await sleep(2000);
@@ -1050,7 +1213,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Restore Demo Mode Button
     launchDemoBtn.disabled = false;
     launchDemoBtn.className = "btn btn-success btn-sm tooltip";
-    launchDemoBtn.innerHTML = `<i data-lucide="play-circle"></i> <span>Demo Mode</span>`;
+    
+    launchDemoBtn.textContent = "";
+    const playIcon = document.createElement("i");
+    playIcon.setAttribute("data-lucide", "play-circle");
+    const demoSpan = document.createElement("span");
+    demoSpan.textContent = " Demo Mode";
+    launchDemoBtn.appendChild(playIcon);
+    launchDemoBtn.appendChild(demoSpan);
     lucide.createIcons();
   });
 
