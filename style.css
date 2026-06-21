@@ -1230,6 +1230,10 @@ input:checked + .slider:before {
   border-color: var(--primary);
   background: rgba(0, 176, 255, 0.03);
 }
+.dropzone.dragover {
+  border-color: var(--accent);
+  background: rgba(0, 230, 118, 0.05);
+}
 .dropzone i {
   width: 48px;
   height: 48px;
@@ -2138,4 +2142,10 @@ input:checked + .slider:before {
   .search-bar {
     width: 100%;
   }
+}
+
+/* 17. ACCESSIBILITY FOCUS VISIBLE STATE CUSTOMIZATION */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }

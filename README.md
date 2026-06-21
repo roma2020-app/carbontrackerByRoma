@@ -4,6 +4,31 @@ Eco-Companion is an automated, zero-friction carbon footprint awareness platform
 
 ---
 
+## Key Features
+
+- **Automated Geofenced Commute Tracking:** Passive velocity-based transport classifier transitions from stationary to moving states and calculates driving, walking, or cycling footprints automatically.
+- **Plaid Bank Utilities Sync:** Integrates mock sandbox bank credit cards to map electric grid emissions and recurring fuel bills.
+- **AI-Powered OCR Grocery Swapper:** Upload supermarket receipt images or speak ingredients aloud to calculate supply-chain lifecycle footprints and get directed to specific in-store aisles for sustainable alternatives.
+- **AR Spatial Smoke Viewer:** Renders volumetric greenhouse gas emissions (red smoke) and offsets (green smoke) in 3D AR space using HTML5 canvas performance.
+- **Group Challenges & Leaderboard:** Engage in social sustainability metrics and ranks with friends and coworkers.
+- **Predictive AI Insights & Forecasts:** Simulates monthly trajectory savings dynamically.
+
+---
+
+## Screenshots
+
+Here are the key visual interfaces of CarbonTrackerByRoma:
+
+| Dashboard Overview | Geofence Simulation Map |
+|:---:|:---:|
+| ![Dashboard Overview](assets/media__1781997725642.png) | ![Geofence Simulation Map](assets/media__1781999272906.png) |
+
+| AI OCR Grocery Swapper | AR Volumetric Smoke Viewer |
+|:---:|:---:|
+| ![AI OCR Grocery Swapper](assets/media__1782001605039.png) | ![AR Volumetric Smoke Viewer](assets/media__1782002417489.png) |
+
+---
+
 ## 1. Chosen Vertical
 **Climate Tech & Personal Carbon Accounting**
 
@@ -16,6 +41,57 @@ Eco-Companion bridges the "Action Gap" by automating personal footprint telemetr
 2. **Transaction-Linked Calculations:** Credit card utility billing ledger updates are synced automatically using a financial sandbox (simulated Plaid integration), mapping recurring utility bills and fuel fill-ups to regional greenhouse gas factors.
 3. **AI OCR Grocery Swapping:** Multi-modal receipt parsing scans supermarket bills, extracts ingredients, estimates supply-chain footprints, and routes the user to the exact local store shelf and aisle where lower-carbon plant-based alternatives are stocked.
 4. **AR Atmosphere Visualizer:** Projects volumetric colored particles inside a room mapping emissions (red smoke) and green offsets (green smoke), turning abstract weight numbers into physical volume metrics.
+
+---
+
+## How this solves the problem
+
+CarbonTrackerByRoma helps users:
+- Understand their carbon footprint
+- Track daily activities
+- Receive personalized reduction tips
+- Monitor progress over time
+
+## Product Architecture
+
+The system utilizes a client-first HTML5/CSS3/JS framework coupled with offscreen physics render caching and regional lifecycle calculations:
+
+```mermaid
+graph TD
+    User([User App Interface])
+    
+    subgraph UI ["Client Layer (HTML5/CSS3/Vanilla JS)"]
+        Nav[Sidebar Navigation Manager]
+        Dash[Dashboard View]
+        GeoView[Transit Geofence View]
+        TransView[Plaid Ledger View]
+        ScanView[Receipt Ingestion Hub]
+        ARView[AR Volumetric Smoke Canvas]
+    end
+    
+    subgraph Core ["Telemetry & Simulation Engines"]
+        GeoEngine[Geofence GPS Simulator]
+        OCREngine[AI Grocery OCR Parser]
+        VoiceEngine[AI Voice Speech Recognizer]
+        AREngine[Offscreen Particle Physics Engine]
+    end
+    
+    subgraph Storage ["Local Cache & Integrations"]
+        Plaid[Plaid Financial Sandbox]
+        DB[(Local Commute & Swap Database)]
+    end
+
+    User --> Nav
+    Nav --> Dash & GeoView & TransView & ScanView & ARView
+    
+    GeoView --> GeoEngine
+    ScanView --> OCREngine & VoiceEngine
+    ARView --> AREngine
+    
+    TransView --> Plaid
+    GeoEngine & OCREngine & Plaid --> DB
+    DB --> Dash
+```
 
 ---
 
@@ -46,15 +122,29 @@ Eco-Companion bridges the "Action Gap" by automating personal footprint telemetr
 
 ---
 
-## 4. How to Run Locally
+## 4. Installation Steps
 
-### Start Development Server
-Ensure Python is installed on your system. Run the HTTP server in the repository root directory:
-```bash
-# Launch server locally on port 8080
-python -m http.server 8080
-```
-Open **[http://localhost:8080](http://localhost:8080)** in your browser.
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/roma-green/carbon-tracker.git
+   cd carbon-tracker
+   ```
+2. **Install Node.js Dependencies (Required for automated tests):**
+   Ensure Node.js is installed. Run:
+   ```bash
+   npm install
+   ```
+3. **Start Development Server:**
+   Launch the lightweight local development server:
+   ```bash
+   npm start
+   ```
+   *Alternatively*, you can run Python's built-in HTTP server:
+   ```bash
+   python -m http.server 8080
+   ```
+4. **Access the App:**
+   Open your browser and navigate to **[http://localhost:8080](http://localhost:8080)**.
 
 ---
 
@@ -67,3 +157,13 @@ No external NPM installs or testing frameworks (like Jest/Mocha) are required. T
 npm test
 ```
 The console will report test coverage for speed limits, carbon multiplier values, grocery alternatives savings, and forecasting models.
+
+---
+
+## Future Enhancements
+
+- **Real Plaid Link Integration:** Connect real credit card statement transaction feeds.
+- **WebRTC Native Camera AR:** Replace canvas particle overlays with actual rear-camera video mapping.
+- **Continuous GPS Tracking Background Service:** Build Native Android and iOS bindings for persistent geolocation logging.
+- **Deep Learning OCR models:** Move from regex-matching presets to server-side image-to-text parsers (Tesseract.js).
+- **Gamified Rewards Exchange:** Introduce redeemable sustainability coupons from partner green merchants.

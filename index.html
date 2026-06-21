@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eco-Companion | Personal Carbon Footprint Tracker</title>
+  <meta name="description" content="Eco-Companion: An automated, zero-friction carbon footprint awareness platform for Climate Tech / Personal Carbon Accounting, utilizing passive geofencing and Plaid utilities sync.">
+  <meta name="keywords" content="climate tech, carbon footprint, personal carbon accounting, Plaid integrations, geofence, sustainability swaps">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none';">
   <!-- Google Fonts: Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,31 +35,31 @@
       </div>
       
       <nav class="nav-menu" role="tablist" aria-label="Primary Navigation">
-        <a href="#dashboard" class="nav-item active" data-tab="dashboard" role="tab" aria-selected="true" aria-controls="dashboard" tabindex="0">
+        <a href="#dashboard" class="nav-item active" data-tab="dashboard" id="tab-dashboard" role="tab" aria-selected="true" aria-controls="dashboard" tabindex="0">
           <i data-lucide="layout-dashboard" aria-hidden="true"></i>
           <span>Dashboard</span>
         </a>
-        <a href="#geofence" class="nav-item" data-tab="geofence" role="tab" aria-selected="false" aria-controls="geofence" tabindex="0">
+        <a href="#geofence" class="nav-item" data-tab="geofence" id="tab-geofence" role="tab" aria-selected="false" aria-controls="geofence" tabindex="-1">
           <i data-lucide="map-pin" aria-hidden="true"></i>
           <span>Transit Geofence</span>
         </a>
-        <a href="#transactions" class="nav-item" data-tab="transactions" role="tab" aria-selected="false" aria-controls="transactions" tabindex="0">
+        <a href="#transactions" class="nav-item" data-tab="transactions" id="tab-transactions" role="tab" aria-selected="false" aria-controls="transactions" tabindex="-1">
           <i data-lucide="wallet" aria-hidden="true"></i>
           <span>Transactions</span>
         </a>
-        <a href="#receipts" class="nav-item" data-tab="receipts" role="tab" aria-selected="false" aria-controls="receipts" tabindex="0">
+        <a href="#receipts" class="nav-item" data-tab="receipts" id="tab-receipts" role="tab" aria-selected="false" aria-controls="receipts" tabindex="-1">
           <i data-lucide="camera" aria-hidden="true"></i>
           <span>Receipt AI & Voice</span>
         </a>
-        <a href="#challenges" class="nav-item" data-tab="challenges" role="tab" aria-selected="false" aria-controls="challenges" tabindex="0">
+        <a href="#challenges" class="nav-item" data-tab="challenges" id="tab-challenges" role="tab" aria-selected="false" aria-controls="challenges" tabindex="-1">
           <i data-lucide="users" aria-hidden="true"></i>
           <span>Challenges</span>
         </a>
-        <a href="#ai-insights" class="nav-item" data-tab="ai-insights" role="tab" aria-selected="false" aria-controls="ai-insights" tabindex="0">
+        <a href="#ai-insights" class="nav-item" data-tab="ai-insights" id="tab-ai-insights" role="tab" aria-selected="false" aria-controls="ai-insights" tabindex="-1">
           <i data-lucide="brain" aria-hidden="true"></i>
           <span>AI & Forecasts</span>
         </a>
-        <a href="#ar-visualizer" class="nav-item" data-tab="ar-visualizer" role="tab" aria-selected="false" aria-controls="ar-visualizer" tabindex="0">
+        <a href="#ar-visualizer" class="nav-item" data-tab="ar-visualizer" id="tab-ar-visualizer" role="tab" aria-selected="false" aria-controls="ar-visualizer" tabindex="-1">
           <i data-lucide="wind" aria-hidden="true"></i>
           <span>AR Smoke Viewer</span>
         </a>
@@ -129,7 +132,7 @@
 
       <!-- Viewports -->
       <!-- TAB 1: DASHBOARD -->
-      <section id="dashboard" class="view-section active">
+      <section id="dashboard" class="view-section active" role="tabpanel" aria-labelledby="tab-dashboard">
         <div class="welcome-banner">
           <h1>Welcome back, Roma!</h1>
           <p>You saved <strong>14.2 kg CO₂</strong> this week. You are only 5.8 kg away from your goal!</p>
@@ -142,7 +145,7 @@
               <span>Weekly Savings</span>
               <i data-lucide="zap"></i>
             </div>
-            <div class="metric-value">14.2 <span class="unit">kg CO₂</span></div>
+            <div class="metric-value"><span id="weekly-savings-val">14.2</span> <span class="unit">kg CO₂</span></div>
             <div class="progress-bar-container">
               <div class="progress-bar" style="width: 71%;"></div>
             </div>
@@ -235,7 +238,7 @@
       </section>
 
       <!-- TAB 2: GEOFENCE TRANSIT -->
-      <section id="geofence" class="view-section">
+      <section id="geofence" class="view-section" role="tabpanel" aria-labelledby="tab-geofence">
         <div class="view-header">
           <div>
             <h1>Autonomous Transit Geofence</h1>
@@ -310,7 +313,7 @@
       </section>
 
       <!-- TAB 3: TRANSACTIONS -->
-      <section id="transactions" class="view-section">
+      <section id="transactions" class="view-section" role="tabpanel" aria-labelledby="tab-transactions">
         <div class="view-header">
           <div>
             <h1>Plaid Transaction Connector</h1>
@@ -387,7 +390,7 @@
       </section>
 
       <!-- TAB 4: RECEIPT AI & VOICE -->
-      <section id="receipts" class="view-section">
+      <section id="receipts" class="view-section" role="tabpanel" aria-labelledby="tab-receipts">
         <div class="view-header">
           <div>
             <h1>AI Receipt Swapper & Voice Logger</h1>
@@ -401,13 +404,13 @@
             <h2>Ingestion Hub</h2>
             <p class="description">Select a demo recipe or use voice logging to simulate immediate OCR analysis.</p>
             
-            <div class="tabs-sub">
-              <button class="tab-sub-btn active" id="tab-sub-upload">Receipt OCR Upload</button>
-              <button class="tab-sub-btn" id="tab-sub-voice">AI Voice Logger</button>
+            <div class="tabs-sub" role="tablist" aria-label="Ingestion Methods">
+              <button class="tab-sub-btn active" id="tab-sub-upload" role="tab" aria-selected="true" aria-controls="sub-upload-content" tabindex="0">Receipt OCR Upload</button>
+              <button class="tab-sub-btn" id="tab-sub-voice" role="tab" aria-selected="false" aria-controls="sub-voice-content" tabindex="-1">AI Voice Logger</button>
             </div>
 
             <!-- Upload Subtab Content -->
-            <div class="sub-tab-content active" id="sub-upload-content">
+            <div class="sub-tab-content active" id="sub-upload-content" role="tabpanel" aria-labelledby="tab-sub-upload">
               <div class="dropzone" id="ocr-dropzone">
                 <i data-lucide="upload-cloud"></i>
                 <h3>Drag & Drop Grocery Receipt</h3>
@@ -422,7 +425,7 @@
             </div>
 
             <!-- Voice Subtab Content -->
-            <div class="sub-tab-content" id="sub-voice-content">
+            <div class="sub-tab-content" id="sub-voice-content" role="tabpanel" aria-labelledby="tab-sub-voice">
               <div class="voice-logger-box">
                 <div class="voice-visualizer">
                   <div class="visualizer-bar bar-1"></div>
@@ -481,7 +484,7 @@
       </section>
 
       <!-- TAB 5: CHALLENGES -->
-      <section id="challenges" class="view-section">
+      <section id="challenges" class="view-section" role="tabpanel" aria-labelledby="tab-challenges">
         <div class="view-header">
           <div>
             <h1>Private Friends Challenge</h1>
@@ -530,7 +533,7 @@
       </section>
 
       <!-- TAB 5.5: AI & PREDICTIVE INSIGHTS -->
-      <section id="ai-insights" class="view-section">
+      <section id="ai-insights" class="view-section" role="tabpanel" aria-labelledby="tab-ai-insights">
         <div class="view-header">
           <div>
             <h1>AI & Predictive Insights</h1>
@@ -655,7 +658,7 @@
       </section>
 
       <!-- TAB 6: AR SMOKE VIEWER -->
-      <section id="ar-visualizer" class="view-section">
+      <section id="ar-visualizer" class="view-section" role="tabpanel" aria-labelledby="tab-ar-visualizer">
         <div class="view-header">
           <div>
             <h1>AR Emission Smoke Visualizer</h1>
@@ -730,7 +733,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="modal-item-title">Shelf Locator Directory</h2>
-        <button class="close-btn" id="shelf-modal-close"><i data-lucide="x"></i></button>
+        <button class="close-btn" id="shelf-modal-close" aria-label="Close shelf locator modal"><i data-lucide="x"></i></button>
       </div>
       <div class="modal-body">
         <div class="locator-insight">

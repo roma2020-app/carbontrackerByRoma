@@ -16,6 +16,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Search bar input validation and sanitization
+  const searchInput = document.querySelector(".search-bar input");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      // Escape HTML characters to prevent XSS
+      const sanitizedVal = e.target.value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+      
+      // Sanitized input value is ready for secure queries
+      console.log("Sanitized search query:", sanitizedVal);
+    });
+  }
+
   /* -------------------------------------------------------------
      TAB NAVIGATION SYSTEM
   ------------------------------------------------------------- */
@@ -31,11 +48,13 @@ document.addEventListener("DOMContentLoaded", () => {
       navItems.forEach(nav => {
         nav.classList.remove("active");
         nav.setAttribute("aria-selected", "false");
+        nav.setAttribute("tabindex", "-1");
       });
       sections.forEach(section => section.classList.remove("active"));
 
       item.classList.add("active");
       item.setAttribute("aria-selected", "true");
+      item.setAttribute("tabindex", "0");
       document.getElementById(targetTab).classList.add("active");
       
       // Reset layout configurations for special views (like AR canvas size)
@@ -53,11 +72,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // W3C Tablist keyboard navigation for main sidebar
+  const navMenu = document.querySelector(".nav-menu");
+  if (navMenu) {
+    navMenu.addEventListener("keydown", (e) => {
+      let index = Array.from(navItems).indexOf(document.activeElement);
+      if (index === -1) return;
+
+      let nextIndex = index;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        e.preventDefault();
+        nextIndex = (index + 1) % navItems.length;
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        nextIndex = (index - 1 + navItems.length) % navItems.length;
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        nextIndex = 0;
+      } else if (e.key === "End") {
+        e.preventDefault();
+        nextIndex = navItems.length - 1;
+      }
+
+      if (nextIndex !== index) {
+        navItems[nextIndex].focus();
+        navItems[nextIndex].click();
+      }
+    });
+  }
+
   /* -------------------------------------------------------------
      TOAST ALERTS SYSTEM
   ------------------------------------------------------------- */
   const toastContainer = document.getElementById("toast-container");
 
+  /**
+   * Displays a toast notification with the specified message and style type.
+   * @param {string} message - The message text to display.
+   * @param {string} [type="success"] - The category styling ('success', 'info', 'warning', 'danger').
+   */
   function showToast(message, type = "success") {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
@@ -110,6 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let distanceAccumulated = 0;
   let carbonGenerated = 0;
   let activeTransitMode = "Stationary";
+  let carbonFactor = 0.0;
 
   // Mock initial trip logs
   let tripsLog = [
@@ -118,6 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
     { mode: "CYCLING", distance: 3.4, carbon: 0.0, date: "June 19, 6:00 PM", isSaving: true }
   ];
 
+  /**
+   * Renders the simulated geofence transit commute trip list into the DOM.
+   */
   function renderTripsLog() {
     tripsLogContainer.textContent = "";
     tripsLog.forEach(trip => {
@@ -198,6 +255,22 @@ document.addEventListener("DOMContentLoaded", () => {
     currentSpeed = parseInt(e.target.value);
     speedValText.textContent = `${currentSpeed} km/h`;
 
+    // Avoid repeated calculations: evaluate transit mode and factor only when speed changes
+    if (currentSpeed <= 5) {
+      activeTransitMode = "Stationary";
+      carbonFactor = 0.0;
+    } else if (currentSpeed <= 15) {
+      activeTransitMode = "WALKING";
+      carbonFactor = 0.0;
+    } else if (currentSpeed <= 28) {
+      activeTransitMode = "CYCLING";
+      carbonFactor = 0.0;
+    } else {
+      activeTransitMode = "DRIVING";
+      carbonFactor = 0.18;
+    }
+    simModeText.textContent = activeTransitMode.charAt(0) + activeTransitMode.slice(1).toLowerCase();
+
     if (currentSpeed === 0) {
       stopTracking();
     } else {
@@ -205,6 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /**
+   * Initiates the GPS transit tracking interval loop.
+   */
   function startTracking() {
     if (trackingInterval) return;
 
@@ -215,27 +291,9 @@ document.addEventListener("DOMContentLoaded", () => {
     mapActivePath.style.strokeDashoffset = "0";
 
     trackingInterval = setInterval(() => {
-      // Choose mode based on speed limits
-      if (currentSpeed > 5 && currentSpeed <= 15) {
-        activeTransitMode = "WALKING";
-      } else if (currentSpeed > 15 && currentSpeed <= 28) {
-        activeTransitMode = "CYCLING";
-      } else if (currentSpeed > 28) {
-        activeTransitMode = "DRIVING";
-      }
-
-      simModeText.textContent = activeTransitMode.charAt(0) + activeTransitMode.slice(1).toLowerCase();
-
       // Accumulate metrics
       const metersPerSec = (currentSpeed * 1000) / 3600;
       distanceAccumulated += (metersPerSec / 1000); // in km
-      
-      // Calculate carbon factor
-      let carbonFactor = 0; // Walking & cycling = 0
-      if (activeTransitMode === "DRIVING") {
-        carbonFactor = 0.18; // 180g per km
-      }
-
       carbonGenerated += (metersPerSec / 1000) * carbonFactor;
 
       simDistanceText.textContent = `${distanceAccumulated.toFixed(2)} km`;
@@ -246,10 +304,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const percent = Math.min((distanceAccumulated / maxDistance) * 100, 100);
       livePointer.style.left = `${50 + (percent * 3)}px`;
       livePointer.style.top = `${150 - (percent * 1)}px`;
-
     }, 1000);
   }
 
+  /**
+   * Clears the GPS transit tracking loop, computes metrics, and logs the trip.
+   */
   function stopTracking() {
     if (!trackingInterval) return;
     
@@ -285,6 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
     distanceAccumulated = 0;
     carbonGenerated = 0;
     activeTransitMode = "Stationary";
+    currentSpeed = 0;
     
     simDistanceText.textContent = "0.0 km";
     simModeText.textContent = "Stationary";
@@ -308,20 +369,18 @@ document.addEventListener("DOMContentLoaded", () => {
      DASHBOARD VALUE HANDLERS
   ------------------------------------------------------------- */
   let currentWeeklySavings = 14.2;
-  const savingsElements = document.querySelectorAll(".metric-card.primary .metric-value");
+  const savingsValElement = document.getElementById("weekly-savings-val");
   const savingsProgressBar = document.querySelector(".progress-bar");
 
+  /**
+   * Increments weekly carbon savings progress and updates visual elements.
+   * @param {number} value - The numeric carbon savings in kg CO2 to add.
+   */
   function updateWeeklySavings(value) {
     currentWeeklySavings += value;
-    savingsElements.forEach(el => {
-      el.textContent = "";
-      const valNode = document.createTextNode(currentWeeklySavings.toFixed(1) + " ");
-      const spanNode = document.createElement("span");
-      spanNode.className = "unit";
-      spanNode.textContent = "kg CO₂";
-      el.appendChild(valNode);
-      el.appendChild(spanNode);
-    });
+    if (savingsValElement) {
+      savingsValElement.textContent = currentWeeklySavings.toFixed(1);
+    }
     
     // Update progress bar percentage
     const newPercent = Math.min((currentWeeklySavings / 20.0) * 100, 100);
@@ -406,6 +465,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /**
+   * Populates transaction ledger rows based on Plaid sandbox accounts.
+   */
   function renderTransactions() {
     transactionsBody.textContent = "";
     mockTransactions.forEach(tx => {
@@ -453,6 +515,25 @@ document.addEventListener("DOMContentLoaded", () => {
   
   const applyAllSwapsBtn = document.getElementById("apply-all-swaps-btn");
 
+  // Event delegation: Bind single click handler on the container to manage all items' actions
+  scanItemsContainer.addEventListener("click", (e) => {
+    const acceptBtn = e.target.closest(".accept-swap-btn");
+    if (acceptBtn) {
+      const id = acceptBtn.getAttribute("data-item-id");
+      applySingleSwap(id);
+      return;
+    }
+
+    const locateBtn = e.target.closest(".shelf-locate-link");
+    if (locateBtn) {
+      const id = locateBtn.getAttribute("data-item-id");
+      const found = currentlyLoadedItems.find(item => item.id === id);
+      if (found) {
+        openShelfLocator(found.alternative, found.aisle);
+      }
+    }
+  });
+
   // Ingestion source layout toggle (Upload vs Voice)
   const tabSubUpload = document.getElementById("tab-sub-upload");
   const tabSubVoice = document.getElementById("tab-sub-voice");
@@ -461,21 +542,108 @@ document.addEventListener("DOMContentLoaded", () => {
 
   tabSubUpload.addEventListener("click", () => {
     tabSubUpload.classList.add("active");
+    tabSubUpload.setAttribute("aria-selected", "true");
+    tabSubUpload.setAttribute("tabindex", "0");
     tabSubVoice.classList.remove("active");
+    tabSubVoice.setAttribute("aria-selected", "false");
+    tabSubVoice.setAttribute("tabindex", "-1");
     uploadContent.classList.add("active");
     voiceContent.classList.remove("active");
   });
 
   tabSubVoice.addEventListener("click", () => {
     tabSubVoice.classList.add("active");
+    tabSubVoice.setAttribute("aria-selected", "true");
+    tabSubVoice.setAttribute("tabindex", "0");
     tabSubUpload.classList.remove("active");
+    tabSubUpload.setAttribute("aria-selected", "false");
+    tabSubUpload.setAttribute("tabindex", "-1");
     voiceContent.classList.add("active");
     uploadContent.classList.remove("active");
   });
 
-  // Drag & drop listeners
+  // W3C Tablist keyboard navigation for sub-tabs Ingestion Hub
+  const tabsSub = document.querySelector(".tabs-sub");
+  const subTabButtons = document.querySelectorAll(".tab-sub-btn");
+  if (tabsSub) {
+    tabsSub.addEventListener("keydown", (e) => {
+      let index = Array.from(subTabButtons).indexOf(document.activeElement);
+      if (index === -1) return;
+
+      let nextIndex = index;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextIndex = (index + 1) % subTabButtons.length;
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        nextIndex = (index - 1 + subTabButtons.length) % subTabButtons.length;
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        nextIndex = 0;
+      } else if (e.key === "End") {
+        e.preventDefault();
+        nextIndex = subTabButtons.length - 1;
+      }
+
+      if (nextIndex !== index) {
+        subTabButtons[nextIndex].focus();
+        subTabButtons[nextIndex].click();
+      }
+    });
+  }
+
+  // Drag & drop listeners with input validation
   dropzone.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", () => simulateOCRScanning("burger"));
+
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+  });
+
+  dropzone.addEventListener("dragleave", () => {
+    dropzone.classList.remove("dragover");
+  });
+
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      validateAndProcessFile(file);
+    }
+  });
+
+  fileInput.addEventListener("change", (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      validateAndProcessFile(file);
+    }
+  });
+
+  /**
+   * Validates file size and type boundaries before invoking simulated OCR pipeline.
+   * @param {File} file - The uploaded receipt image file object.
+   */
+  function validateAndProcessFile(file) {
+    // Validate file size limit: 5MB
+    const maxSizeBytes = 5 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      showToast("File size exceeds 5MB limit.", "danger");
+      fileInput.value = "";
+      return;
+    }
+
+    // Validate image MIME types
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      showToast("Unsupported file type. Please upload a JPG, PNG, or WebP receipt image.", "danger");
+      fileInput.value = "";
+      return;
+    }
+
+    simulateOCRScanning("burger");
+  }
 
   // Presets trigger
   document.querySelectorAll(".preset-btn").forEach(btn => {
@@ -505,6 +673,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentlyLoadedItems = [];
 
+  /**
+   * Simulates AI grocery receipt scanning and triggers OCR parsed item results.
+   * @param {string} presetKey - The grocery purchase mock data key ('burger' or 'salad').
+   */
   function simulateOCRScanning(presetKey) {
     scanEmptyView.style.display = "none";
     scanCompletedView.style.display = "none";
@@ -526,6 +698,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   }
 
+  /**
+   * Renders the parsed receipt items and alternative swap offers inside the UI.
+   */
   function renderScanItems() {
     scanItemsContainer.textContent = "";
     currentlyLoadedItems.forEach(item => {
@@ -586,26 +761,12 @@ document.addEventListener("DOMContentLoaded", () => {
       scanItemsContainer.appendChild(card);
     });
 
-    // Wire up individual Accept buttons
-    document.querySelectorAll(".accept-swap-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-item-id");
-        applySingleSwap(id);
-      });
-    });
-
-    // Wire up shelf locators
-    document.querySelectorAll(".shelf-locate-link").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-item-id");
-        const found = currentlyLoadedItems.find(item => item.id === id);
-        if (found) {
-          openShelfLocator(found.alternative, found.aisle);
-        }
-      });
-    });
   }
 
+  /**
+   * Activates a single grocery ingredient swap, updating weekly savings.
+   * @param {string} itemId - The ID of the item being swapped.
+   */
   function applySingleSwap(itemId) {
     const idx = currentlyLoadedItems.findIndex(i => i.id === itemId);
     if (idx === -1) return;
@@ -618,22 +779,25 @@ document.addEventListener("DOMContentLoaded", () => {
     card.style.borderColor = "var(--accent)";
     card.style.background = "rgba(0, 230, 118, 0.03)";
     
-    swapBox.textContent = "";
-    const successDiv = document.createElement("div");
-    successDiv.style.color = "var(--accent)";
-    successDiv.style.fontWeight = "600";
-    successDiv.style.display = "flex";
-    successDiv.style.alignItems = "center";
-    successDiv.style.gap = "6px";
-    
-    const checkIcon = document.createElement("i");
-    checkIcon.setAttribute("data-lucide", "check");
-    const checkText = document.createTextNode(" Swapped successfully!");
-    
-    successDiv.appendChild(checkIcon);
-    successDiv.appendChild(checkText);
-    swapBox.appendChild(successDiv);
-    lucide.createIcons();
+    const swapBox = document.getElementById(`swap-box-${itemId}`);
+    if (swapBox) {
+      swapBox.textContent = "";
+      const successDiv = document.createElement("div");
+      successDiv.style.color = "var(--accent)";
+      successDiv.style.fontWeight = "600";
+      successDiv.style.display = "flex";
+      successDiv.style.alignItems = "center";
+      successDiv.style.gap = "6px";
+      
+      const checkIcon = document.createElement("i");
+      checkIcon.setAttribute("data-lucide", "check");
+      const checkText = document.createTextNode(" Swapped successfully!");
+      
+      successDiv.appendChild(checkIcon);
+      successDiv.appendChild(checkText);
+      swapBox.appendChild(successDiv);
+      lucide.createIcons();
+    }
 
     // Adjust total carbon metrics on top bar
     let newTotal = parseFloat(scanTotalCarbon.textContent) - item.savings;
@@ -704,6 +868,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /**
+   * Alternates the active state of speech processing microphone inputs.
+   */
   function toggleVoiceRecording() {
     isRecording = !isRecording;
     if (isRecording) {
@@ -753,6 +920,11 @@ document.addEventListener("DOMContentLoaded", () => {
   
   const modalDoneBtn = document.getElementById("modal-done-btn");
 
+  /**
+   * Launches the indoor inventory locator modal and highlights the target store aisle.
+   * @param {string} itemName - The name of the alternative product.
+   * @param {string} storeLocation - Aisle identifier string.
+   */
   function openShelfLocator(itemName, storeLocation) {
     modalItemTitle.textContent = itemName;
     locatorStoreName.textContent = `Target & Kroger - ${storeLocation}`;
@@ -777,6 +949,9 @@ document.addEventListener("DOMContentLoaded", () => {
     shelfModal.classList.add("open");
   }
 
+  /**
+   * Closes the indoor shelf locator modal.
+   */
   function closeShelfLocator() {
     shelfModal.classList.remove("open");
   }
@@ -798,6 +973,9 @@ document.addEventListener("DOMContentLoaded", () => {
     { rank: 4, name: "Sarah Vance", score: 9.8, isMe: false }
   ];
 
+  /**
+   * Re-evaluates and displays user ranks on the weekly group leaderboard.
+   */
   function renderLeaderboard() {
     leaderboardContainer.textContent = "";
     leaderboardUsers.sort((a,b) => b.score - a.score).forEach((user, index) => {
@@ -926,11 +1104,47 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const bgCanvas = document.createElement("canvas");
+  const bgCtx = bgCanvas.getContext("2d");
+
+  /**
+   * Caches the static spatial room grid onto an offscreen canvas to avoid expensive redundant stroke operations.
+   */
+  function renderStaticBg() {
+    bgCanvas.width = canvas.width;
+    bgCanvas.height = canvas.height;
+    
+    bgCtx.fillStyle = "#0c101a";
+    bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+    
+    bgCtx.strokeStyle = "rgba(0, 176, 255, 0.08)";
+    bgCtx.lineWidth = 1;
+    const gridSize = 30;
+    
+    bgCtx.beginPath();
+    for (let x = 0; x < bgCanvas.width; x += gridSize) {
+      bgCtx.moveTo(x, 0);
+      bgCtx.lineTo(x, bgCanvas.height);
+    }
+    for (let y = 0; y < bgCanvas.height; y += gridSize) {
+      bgCtx.moveTo(0, y);
+      bgCtx.lineTo(bgCanvas.width, y);
+    }
+    bgCtx.stroke();
+  }
+
+  /**
+   * Adjusts the HTML5 canvas bounds to align with the active parent container size.
+   */
   function resizeArCanvas() {
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = canvas.parentElement.clientHeight;
+    renderStaticBg();
   }
 
+  /**
+   * Pre-populates and runs structural rendering routines on the AR canvas.
+   */
   function initArVisuals() {
     particleList = [];
     resizeArCanvas();
@@ -949,28 +1163,14 @@ document.addEventListener("DOMContentLoaded", () => {
     loopArVisuals();
   }
 
+  /**
+   * Triggers volumetric canvas animation frames, managing particle logic.
+   */
   function loopArVisuals() {
     // Background clear/draw
     if (!isCustomBackground) {
-      // Draw grid spatial room grid
-      ctx.fillStyle = "#0c101a";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.strokeStyle = "rgba(0, 176, 255, 0.08)";
-      ctx.lineWidth = 1;
-      const gridSize = 30;
-      for (let x = 0; x < canvas.width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
+      // Use cached offscreen canvas grid draw instead of drawing lines on every single frame
+      ctx.drawImage(bgCanvas, 0, 0);
     } else {
       // Sim Live camera noise filter style background
       ctx.fillStyle = "#1e293b";
@@ -986,7 +1186,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Particle logic collisions (green particles neutralizing red ones)
+    // Particle logic collisions (green particles neutralizing red ones via square distance comparison)
     let redParticles = particleList.filter(p => p.colorType === "red");
     let greenParticles = particleList.filter(p => p.colorType === "green");
 
@@ -994,8 +1194,10 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let r of redParticles) {
         const dx = g.x - r.x;
         const dy = g.y - r.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < g.size + r.size) {
+        // Avoid Math.sqrt calculations to optimize loops
+        const distSq = dx * dx + dy * dy;
+        const minDistance = g.size + r.size;
+        if (distSq < minDistance * minDistance) {
           // Neutralize red particle
           r.decay = 0.08; 
           g.decay = 0.08;
@@ -1120,6 +1322,11 @@ document.addEventListener("DOMContentLoaded", () => {
   ------------------------------------------------------------- */
   const launchDemoBtn = document.getElementById("launch-demo-btn");
 
+  /**
+   * Halts thread execution for a set duration to simulate network requests.
+   * @param {number} ms - Milliseconds to sleep.
+   * @returns {Promise<void>}
+   */
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -1227,6 +1434,9 @@ document.addEventListener("DOMContentLoaded", () => {
   /* -------------------------------------------------------------
      15. SELF-TESTING & DIAGNOSTICS SUITE
   ------------------------------------------------------------- */
+  /**
+   * Executes core client-side arithmetic assertions to verify math consistency.
+   */
   function runSelfDiagnostics() {
     console.log("🛠️ Starting Eco-Companion Self-Diagnostics checks...");
     
@@ -1265,6 +1475,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const notificationBadge = document.querySelector("#notifications-bell-btn .badge");
   const notificationCards = document.querySelectorAll(".notification-card-item");
 
+  /**
+   * Triggers global notification badge recount based on DOM elements.
+   */
   function updateNotificationBadge() {
     if (!notificationBadge) return;
     const unreadCount = document.querySelectorAll(".notification-card-item.unread").length;
@@ -1323,8 +1536,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Call initial canvas state
+  // Pause AR volumetric render loops when window is hidden or minimized
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    } else {
+      if (isArViewActive) {
+        loopArVisuals();
+      }
+    }
+  });
+
+  /**
+   * Resizes the canvas to match current parent window container bounds.
+   */
   window.addEventListener("resize", resizeArCanvas);
+  
+  /**
+   * Bootstraps the AR volumetric smoke canvas simulator setup.
+   */
   initArVisuals();
 });
 
