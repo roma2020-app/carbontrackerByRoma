@@ -19,13 +19,14 @@ Eco-Companion is an automated, zero-friction carbon footprint awareness platform
 
 Here are the key visual interfaces of CarbonTrackerByRoma:
 
-| Dashboard Overview | Geofence Simulation Map |
-|:---:|:---:|
-| ![Dashboard Overview](assets/media__1781997725642.png) | ![Geofence Simulation Map](assets/media__1781999272906.png) |
-
-| AI OCR Grocery Swapper | AR Volumetric Smoke Viewer |
-|:---:|:---:|
-| ![AI OCR Grocery Swapper](assets/media__1782001605039.png) | ![AR Volumetric Smoke Viewer](assets/media__1782002417489.png) |
+<p align="center">
+  <img src="assets/media__1781997725642.png" width="45%" alt="Dashboard Overview" style="border-radius: 8px; margin: 5px;" />
+  <img src="assets/media__1781999272906.png" width="45%" alt="Geofence Simulation Map" style="border-radius: 8px; margin: 5px;" />
+</p>
+<p align="center">
+  <img src="assets/media__1782001605039.png" width="45%" alt="AI OCR Grocery Swapper" style="border-radius: 8px; margin: 5px;" />
+  <img src="assets/media__1782002417489.png" width="45%" alt="AR Volumetric Smoke Viewer" style="border-radius: 8px; margin: 5px;" />
+</p>
 
 ---
 
@@ -126,7 +127,7 @@ graph TD
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/roma-green/carbon-tracker.git
+   git clone https://github.com/roma2020-app/carbontrackerByRoma.git
    cd carbon-tracker
    ```
 2. **Install Node.js Dependencies (Required for automated tests):**
