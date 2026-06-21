@@ -1,7 +1,7 @@
 # carbontracker-by-roma
 Carbon Tracker  is an intelligent sustainability platform designed to increase carbon footprint awareness and encourage eco-friendly behavior. By analyzing everyday activities and providing data-driven recommendations, the platform helps users understand their environmental impact and take meaningful steps toward reducing carbon emissions. 
 
-# Eco-Companion: Personal Carbon Footprint Tracker MVP
+# Eco-Companion: Personal Carbon Footprint Tracker 
 
 An automated, zero-friction carbon footprint awareness platform designed for hackathons. It helps individuals understand, track, and reduce their daily emissions through passive tracking, smart AI integrations, and spatial augmented reality (AR) visualizations.
 
