@@ -1,8 +1,15 @@
 # Eco-Companion: Personal Carbon Footprint Tracker
 
-Eco-Companion is an automated, zero-friction carbon footprint awareness platform. It addresses the primary source of user churn in climate trackers—**manual entry fatigue**—by utilizing passive geolocation geofencing, real-time banking ledger integration, and multi-modal AI receipt scanning.
+A personal carbon footprint tracking platform that helps users monitor environmental impact through automated commute tracking, AI-powered receipt analysis, sustainability recommendations, and interactive carbon visualization tools.
+
+Live Demo: https://roma2020-app.github.io/carbontrackerByRoma/
+
+GitHub: https://github.com/roma2020-app/carbontrackerByRoma
 
 ---
+# Project Summary
+
+Eco-Companion: Personal Carbon Footprint Tracker is a climate-tech web application that helps users understand, track, and reduce their personal carbon footprint through intelligent automation. The platform minimizes manual data entry by combining commute tracking, carbon impact calculations, AI-powered receipt analysis, and sustainability insights. Users can monitor daily environmental impact, receive personalized recommendations, visualize emissions, and participate in eco-friendly challenges to encourage sustainable behavior. The solution aims to bridge the gap between carbon awareness and actionable lifestyle changes through an engaging and data-driven experience.
 
 ## Key Features
 
@@ -30,10 +37,9 @@ Here are the key visual interfaces of CarbonTrackerByRoma:
 
 ---
 
-## 1. Chosen Vertical
-**Climate Tech & Personal Carbon Accounting**
 
-### Problem Statement
+
+### Problem
 Most carbon trackers fail because logging daily actions manually (commutes, flights, meals) is a heavy administrative burden, leading to rapid user churn. Furthermore, abstract metrics like "10kg CO₂" fail to inspire behavioral modification due to psychological distance, and users lack localized directions to execute swaps.
 
 ### The Solution: Eco-Companion
@@ -47,7 +53,7 @@ Eco-Companion bridges the "Action Gap" by automating personal footprint telemetr
 
 ## How this solves the problem
 
-CarbonTrackerByRoma helps users:
+Eco-Companion: Personal Carbon Footprint Tracker helps users:
 - Understand their carbon footprint
 - Track daily activities
 - Receive personalized reduction tips
@@ -104,26 +110,10 @@ graph TD
 
 ---
 
-## 3. Compliance & Review Standards (95%+ Scoring Target)
-
-### 🔴 High Impact: Problem Statement Alignment & Code Quality
-- **Alignment:** Focuses entirely on personal carbon tracking and localized, in-stock merchant swaps (shelf locators) to close the sustainability action gap.
-- **Code Quality:** Strictly separates HTML structures, visual stylesheets, and application scripts. Zero global scope pollution: variables are wrapped within a protective DOM lifecycle listener.
-
-### 🟡 Medium Impact: Security & Resource Efficiency
-- **XSS Audited Security:** Absolutely zero references to `innerHTML` when rendering user transcripts, presets, and OCR inputs. All DOM updates are executed using secure text binding APIs (`document.createElement`, `textContent`, `document.createTextNode`, `appendChild`) to eliminate cross-site scripting (XSS) vectors.
-- **Version Integrity:** external script links are pinned to stable, immutable CDN paths rather than mutable `@latest` parameters.
-- **Resource Optimization:** Background render loops (`requestAnimationFrame`) for the HTML5 canvas AR smoke visualizer are automatically suspended when the visual tab is hidden or deactivated, preventing CPU/GPU memory leaks.
-
-### 🟢 Low Impact: Accessibility & Testing
-- **W3C A11y Standards:** Employs standard W3C ARIA roles (`role="tablist"`, `role="tab"`), state trackers (`aria-selected`, `aria-controls`), and keyboard indexes (`tabindex="0"`) on navigation nodes.
-- **Labels:** Explicit `aria-label` tags are attached to all inputs (search box, speed slider, file uploader) and icon-only action triggers.
-- **Native Unit Testing Suite:** Features a standard unit testing harness (`test.js`) executed via Node's native test runner (`node --test`), verifying transit mode classification formulas, saving deltas, and trajectory math.
-- **Automated Self-Diagnostics:** Runs calculations assertions directly inside the client browser on page loading to flag logic anomalies early.
 
 ---
 
-## 4. Installation Steps
+## 3. Installation Steps
 
 1. **Clone the Repository:**
    ```bash
@@ -147,6 +137,7 @@ graph TD
 4. **Access the App:**
    Open your browser and navigate to **[http://localhost:8080](http://localhost:8080)**.
 
+Live Demo: https://roma2020-app.github.io/carbontrackerByRoma/
 ---
 
 ## 5. Running Automated Unit Tests
